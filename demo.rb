@@ -1,5 +1,5 @@
 require 'open-uri'
-require_relative './ruby_inspector'
+require_relative './lib/ruby_inspector'
 require 'pry'
 binding.pry
 
