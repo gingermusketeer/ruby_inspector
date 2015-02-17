@@ -1,12 +1,9 @@
+require 'net/http'
+
 module Nsa
 
   class NetHttpTracker
     class<<self
-      # attr_reader :on_request
-
-      # def enable
-      #   # Monkey patch
-      # end
       def on_request(&block)
         if block_given?
           @on_request = block

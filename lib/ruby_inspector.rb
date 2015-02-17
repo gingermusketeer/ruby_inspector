@@ -1,4 +1,3 @@
-require 'net/http'
 require 'json'
 require_relative './ruby_inspector/nsa/net_http_tracker'
 require_relative './ruby_inspector/dev_tools_request_tracker'
