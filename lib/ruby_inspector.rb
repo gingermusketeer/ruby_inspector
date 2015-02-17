@@ -89,16 +89,7 @@ module RubyInspector
     end
 
     def notify_body_received
-      data1 = {
-        method: "Network.loadingFinished",
-        params: {
-          requestId: request_id,
-          timestamp: Time.now.to_f,
-          encodedDataLength: body.length
-        }
-      }
-      RubyInspector.socket.puts(::JSON.generate(data1))
-      sleep 2
+
       data2 = {
         method: "RubyInspector.network.cacheBody",
         params: { requestId: request_id },
@@ -108,24 +99,21 @@ module RubyInspector
         }
       }
       RubyInspector.socket.puts(::JSON.generate(data2))
+      sleep 2
+      data1 = {
+        method: "Network.loadingFinished",
+        params: {
+          requestId: request_id,
+          timestamp: Time.now.to_f,
+          encodedDataLength: body.length
+        }
+      }
+      RubyInspector.socket.puts(::JSON.generate(data1))
+
     end
   end
 
   connect
-end
-
-module OpenURI
-  class << self
-    alias_method(:orig_open_loop, :open_loop) unless method_defined?(:orig_open_loop)
-
-    def open_loop(uri, options)
-      io = orig_open_loop(uri, options)
-      ::RubyInspector.current_request_tracker.body = io.read
-
-      io.rewind
-      io
-    end
-  end
 end
 
 module Net
@@ -134,15 +122,21 @@ module Net
     alias_method(:orig_connect, :connect) unless method_defined?(:orig_connect)
 
     def request(req, body = nil, &block)
-      ::RubyInspector.current_request_tracker = ::RubyInspector::RequestTracker.new(req, @address, @port)
-      response = orig_request(req, body, &block)
+      ::RubyInspector.current_request_tracker = ::RubyInspector::RequestTracker.new(
+        req, @address, @port
+      )
+      body = ''
+      block_provided = block_given?
+      response = orig_request(req, body ) { |resp|
+        resp.read_body { |str| body << str }
+        resp.define_singleton_method(:read_body) do |&block|
+          block.call(body) unless block.nil?
+        end
+        block.call(resp) if block_provided
+      }
 
       ::RubyInspector.current_request_tracker.response = response
-
-      # Might also need to take into account if it was a OpenURI request
-      if response.code.to_i >= 300 && response.code.to_i < 400
-        ::RubyInspector.current_request_tracker.body = ''
-      end
+      ::RubyInspector.current_request_tracker.body = body
       response
     end
   end
