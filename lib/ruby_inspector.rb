@@ -4,14 +4,14 @@ require_relative './ruby_inspector/dev_tools_request_tracker'
 
 module RubyInspector
   class << self
-    def enable
+    def enable(app_name, description = '')
       connect
       send_info(
         method: "RubyInspector.initialize",
         params:{
-          name: "My app",
+          name: app_name,
           type: :ruby,
-          description: "opens uris like a boss"
+          description: description
         }
       )
 

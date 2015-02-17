@@ -1,7 +1,10 @@
 require 'open-uri'
 require_relative './lib/ruby_inspector'
 require 'pry'
-RubyInspector.enable
+RubyInspector.enable(
+  "ruby inspector demo",
+  "demonstrates how to debug http requests like a boss"
+)
 binding.pry
 
 puts "opening example.com"
