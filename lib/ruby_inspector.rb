@@ -28,7 +28,7 @@ module RubyInspector
       @socket = TCPSocket.new 'localhost', 8124
     end
 
-    def send_init_info
+    def send_init_info(app_name, description)
       send_info(
         method: 'RubyInspector.initialize',
         params: {
