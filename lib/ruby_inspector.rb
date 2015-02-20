@@ -8,14 +8,7 @@ module RubyInspector
   class << self
     def enable(app_name, description = '')
       connect
-      send_info(
-        method: "RubyInspector.initialize",
-        params:{
-          name: app_name,
-          type: :ruby,
-          description: description
-        }
-      )
+      send_init_info(app_name, description)
 
       ::Nsa::NetHttpTracker.on_request do |net_http_request_tracker|
         DevToolsRequestTracker.new(net_http_request_tracker)
@@ -33,6 +26,17 @@ module RubyInspector
     attr_accessor :socket
     def connect
       @socket = TCPSocket.new 'localhost', 8124
+    end
+
+    def send_init_info
+      send_info(
+        method: 'RubyInspector.initialize',
+        params: {
+          name: app_name,
+          type: :ruby,
+          description: description
+        }
+      )
     end
   end
 end

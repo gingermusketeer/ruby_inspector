@@ -1,7 +1,6 @@
 require 'net/http'
 
 module Nsa
-
   class NetHttpTracker
     class<<self
       def on_request(&block)
@@ -11,7 +10,6 @@ module Nsa
           @on_request
         end
       end
-
     end
 
     attr_reader :protocol, :address, :port, :path, :method, :request_headers,
@@ -51,12 +49,12 @@ module Nsa
       @status_code = status_code
       @status_message = status_message
       @response_headers = headers
-      self.on_response.call
+      on_response.call
     end
 
     def response_body=(body)
       @response_body = body
-      self.on_body.call
+      on_body.call
     end
   end
 end
@@ -68,19 +66,20 @@ module Net
 
     def request(req, body = nil, &block)
       protocol = use_ssl? ? 'https' : 'http'
+      request_headers = Hash[req.each_header.to_a]
       request_tracker = ::Nsa::NetHttpTracker.new(
-        protocol, @address, @port, req.path, req.method, Hash[req.each_header.to_a]
+        protocol, @address, @port, req.path, req.method, request_headers
       )
 
       body = ''
       block_provided = block_given?
-      response = orig_request(req, body ) { |resp|
+      response = orig_request(req, body) do |resp|
         resp.read_body { |str| body << str }
         resp.define_singleton_method(:read_body) do |&block|
           block.call(body) unless block.nil?
         end
         block.call(resp) if block_provided
-      }
+      end
 
       request_tracker.set_response_info(
         response.code, response.message, Hash[response.each_header.to_a]

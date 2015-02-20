@@ -1,7 +1,5 @@
 module RubyInspector
-
   class DevToolsRequestTracker
-
     def self.next_request_id
       @current_request_id ||= 0
       @current_request_id += 1
@@ -13,17 +11,13 @@ module RubyInspector
       @request_tracker = request_tracker
       @request_id = self.class.next_request_id.to_s
       notify_request_started
-      request_tracker.on_response {
-        notify_response_received
-      }
-      request_tracker.on_body {
-        notify_body_received
-      }
+      request_tracker.on_response { notify_response_received }
+      request_tracker.on_body { notify_body_received }
     end
 
     def notify_request_started
       RubyInspector.send_info(
-        method: "Network.requestWillBeSent",
+        method: 'Network.requestWillBeSent',
         params: {
           requestId: request_id,
           request: {
@@ -32,26 +26,26 @@ module RubyInspector
             headers: request_tracker.request_headers
           },
           timestamp: Time.now.to_f,
-          type: "Other"
+          type: 'Other'
         }
       )
     end
 
     def notify_response_received
       RubyInspector.send_info(
-        method: "Network.responseReceived",
-        params:{
+        method: 'Network.responseReceived',
+        params: {
           requestId: request_id,
           timestamp: Time.now.to_f,
-          type:"Document",
-          response:{
+          type: 'Document',
+          response: {
             url: request_tracker.url,
             status: request_tracker.status_code,
             statusText: request_tracker.status_message,
             headers: request_tracker.response_headers,
-            mimeType: "text/html",
+            mimeType: 'text/html',
             requestHeaders: request_tracker.request_headers,
-            remotePort: request_tracker.port,
+            remotePort: request_tracker.port
           }
         }
       )
@@ -59,7 +53,7 @@ module RubyInspector
 
     def notify_body_received
       RubyInspector.send_info(
-        method: "RubyInspector.network.cacheBody",
+        method: 'RubyInspector.network.cacheBody',
         params: { requestId: request_id },
         result: {
           body: request_tracker.response_body,
@@ -70,7 +64,7 @@ module RubyInspector
       sleep 2
 
       RubyInspector.send_info(
-        method: "Network.loadingFinished",
+        method: 'Network.loadingFinished',
         params: {
           requestId: request_id,
           timestamp: Time.now.to_f,
