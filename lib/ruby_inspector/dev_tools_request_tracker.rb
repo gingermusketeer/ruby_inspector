@@ -62,8 +62,6 @@ module RubyInspector
         }
       )
 
-      sleep 2
-
       RubyInspector.send_info(
         method: 'Network.loadingFinished',
         params: {
