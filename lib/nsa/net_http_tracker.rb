@@ -65,6 +65,7 @@ module Net
     alias_method(:orig_connect, :connect) unless method_defined?(:orig_connect)
 
     def request(req, body = nil, &block)
+      return orig_request(req, body, &block) unless started?
       protocol = use_ssl? ? 'https' : 'http'
       request_headers = Hash[req.each_header.to_a]
       request_tracker = ::Nsa::NetHttpTracker.new(
