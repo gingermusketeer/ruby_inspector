@@ -12,10 +12,12 @@ See [RubyInspector demos](https://github.com/gingermusketeer/ruby_inspector_demo
 
 1. Get a copy of [chrome devtools app](https://github.com/auchenberg/chrome-devtools-app)
 2. Setup and start [ruby_inspector_server](https://github.com/gingermusketeer/ruby_inspector_server)
-3. Run `ruby demo.rb`
-4. Connect the devtools app to your app. apps -> Go
-5. Unleash the app from the breakpoint
-6. Monitor http traffic
+3. Add `gem 'ruby_inspector'` to your gem file
+4. Add `RubyInspector.enable("MyAppName", "Optional description")` to enable monitoring
+5. Add a breakpoint before the network requests are made
+6. Connect the devtools app to your app. apps -> Go
+7. Unleash the app from the breakpoint
+8. Monitor http traffic
 
 
 # Todo
