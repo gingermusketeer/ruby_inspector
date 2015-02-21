@@ -75,8 +75,10 @@ module Net
       block_provided = block_given?
       response = orig_request(req, body) do |resp|
         resp.read_body { |str| body << str }
-        resp.define_singleton_method(:read_body) do |&block|
+        resp.define_singleton_method(:read_body) do |dest = nil, &block|
+          dest << body unless dest.nil?
           block.call(body) unless block.nil?
+          body
         end
         block.call(resp) if block_provided
       end
