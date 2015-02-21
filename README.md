@@ -1,4 +1,4 @@
-# RubyInspector
+# RubyInspector ![](https://travis-ci.org/gingermusketeer/ruby_inspector.svg?branch=master)
 
 Allows for ruby apps to be debugged using the standard chrome developer tools
 
