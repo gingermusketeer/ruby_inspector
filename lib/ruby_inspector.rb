@@ -26,7 +26,7 @@ module RubyInspector
 
     attr_accessor :socket
     def connect
-      @socket = TCPSocket.new 'localhost', 8124
+      @socket = TCPSocket.new('localhost', 8124)
     end
 
     def send_init_info(app_name, description)
