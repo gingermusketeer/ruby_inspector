@@ -5,6 +5,7 @@ require_relative './nsa/net_http_tracker'
 require_relative './ruby_inspector/dev_tools_request_tracker'
 
 module RubyInspector
+  DELIMITER = "\0"
   class << self
     def enable(app_name, description = '')
       connect
@@ -17,7 +18,7 @@ module RubyInspector
 
     def send_info(data)
       socket.puts(
-        ::JSON.generate(data)
+        ::JSON.generate(data) + DELIMITER
       )
     end
 
