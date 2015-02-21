@@ -2,6 +2,12 @@
 
 Allows for ruby apps to be debugged using the standard chrome developer tools
 
+# Demo
+
+![RubyInspector demo gif](https://raw.githubusercontent.com/gingermusketeer/ruby_inspector/master/readme/demo.gif)
+
+See [RubyInspector demos](https://github.com/gingermusketeer/ruby_inspector_demos) for more examples
+
 # Getting started
 
 1. Get a copy of [chrome devtools app](https://github.com/auchenberg/chrome-devtools-app)
