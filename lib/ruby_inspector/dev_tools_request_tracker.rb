@@ -23,7 +23,8 @@ module RubyInspector
           request: {
             url: request_tracker.url,
             method: request_tracker.method,
-            headers: request_tracker.request_headers
+            headers: request_tracker.request_headers,
+            postData: request_tracker.request_body
           },
           timestamp: Time.now.to_f,
           type: 'Other'

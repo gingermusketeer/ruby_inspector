@@ -13,15 +13,17 @@ module Nsa
     end
 
     attr_reader :protocol, :address, :port, :path, :method, :request_headers,
-      :status_code, :status_message, :response_headers, :response_body
+      :request_body, :status_code, :status_message, :response_headers,
+      :response_body
 
-    def initialize(protocol, address, port, path, method, headers)
+    def initialize(protocol, address, port, path, method, headers, body)
       @protocol = protocol
       @address = address
       @port = port
       @path = path
       @method = method
       @request_headers = headers
+      @request_body = body
       self.class.on_request.call(self)
     end
 
@@ -64,22 +66,23 @@ module Net
     alias_method(:orig_request, :request) unless method_defined?(:orig_request)
     alias_method(:orig_connect, :connect) unless method_defined?(:orig_connect)
 
-    def request(req, body = nil, &block)
-      return orig_request(req, body, &block) unless started?
+    def request(req, request_body = nil, &block)
+      return orig_request(req, request_body, &block) unless started?
       protocol = use_ssl? ? 'https' : 'http'
       request_headers = Hash[req.each_header.to_a]
       request_tracker = ::Nsa::NetHttpTracker.new(
-        protocol, @address, @port, req.path, req.method, request_headers
+        protocol, @address, @port, req.path, req.method, request_headers,
+        request_body || req.body
       )
 
-      body = ''
+      response_body = ''
       block_provided = block_given?
-      response = orig_request(req, body) do |resp|
-        resp.read_body { |str| body << str }
+      response = orig_request(req, request_body) do |resp|
+        resp.read_body { |str| response_body << str }
         resp.define_singleton_method(:read_body) do |dest = nil, &block|
-          dest << body unless dest.nil?
-          block.call(body) unless block.nil?
-          body
+          dest << response_body unless dest.nil?
+          block.call(response_body) unless block.nil?
+          response_body
         end
         block.call(resp) if block_provided
       end
@@ -87,7 +90,7 @@ module Net
       request_tracker.set_response_info(
         response.code, response.message, Hash[response.each_header.to_a]
       )
-      request_tracker.response_body = body
+      request_tracker.response_body = response_body
       response
     end
   end
