@@ -1,4 +1,4 @@
-# Ruby Inspector
+# RubyInspector
 
 Allows for ruby apps to be debugged using the standard chrome developer tools
 
