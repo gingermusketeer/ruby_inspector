@@ -1,5 +1,5 @@
-require 'rubygems'
-require 'rack'
+require "rubygems"
+require "rack"
 
 class TestServer
   class<<self
@@ -23,7 +23,7 @@ class TestServer
     private
 
     def find_available_port
-      server = TCPServer.new('127.0.0.1', 0)
+      server = TCPServer.new("127.0.0.1", 0)
       server.addr[1]
     ensure
       server.close if server
@@ -33,12 +33,14 @@ class TestServer
 
   def call(env)
     @root = File.expand_path(File.dirname(__FILE__))
-    path = Rack::Utils.unescape(env['PATH_INFO'])
-    case path
-    when '/get_success'
-      [ 200, {'Content-Type' => 'text/plain'}, 'success' ]
+    path = Rack::Utils.unescape(env["PATH_INFO"])
+    method = env["REQUEST_METHOD"]
+    if method == "GET" && path == "/get_success"
+      [200, { "Content-Type" => "text/plain" }, "success"]
+    elsif method == "POST" && path == "/post_success"
+      [200, { "Content-Type" => "text/plain" }, "post success"]
     else
-      [ 404, {'Content-Type' => 'text/plain'}, '404 aw snap' ]
+      [404, { "Content-Type" => "text/plain" }, "404 aw snap"]
     end
 
   end
