@@ -30,7 +30,7 @@ describe Nsa::NetHttpTracker do
     end
 
     it 'tracks GET requests made with open-uri' do
-      described_class.on_request { |request_tracker|
+      described_class.on_request do |request_tracker|
         expect(request_tracker.url).to eql("http://localhost/get_success")
         expect(request_tracker.port).to eql(port)
         expect(request_tracker.request_headers).to eql(
@@ -40,7 +40,7 @@ describe Nsa::NetHttpTracker do
         )
         expect(request_tracker.response_body).to be(nil)
 
-        request_tracker.on_response {
+        request_tracker.on_response do
           expect(request_tracker.status_code).to eql("200")
           expect(request_tracker.status_message).to eql("OK")
           expect(request_tracker.response_headers).to eql(
@@ -48,12 +48,12 @@ describe Nsa::NetHttpTracker do
             'content-type' => 'text/plain',
             'server' => 'thin'
           )
-        }
+        end
 
-        request_tracker.on_body {
+        request_tracker.on_body do
           expect(request_tracker.response_body).to eql('success')
-        }
-      }
+        end
+      end
 
       response = open("#{base_url}/get_success")
       expect(response.read).to eql("success")
