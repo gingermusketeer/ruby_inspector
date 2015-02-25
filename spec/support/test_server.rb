@@ -34,9 +34,11 @@ class TestServer
   def call(env)
     @root = File.expand_path(File.dirname(__FILE__))
     path = Rack::Utils.unescape(env['PATH_INFO'])
-    case path
-    when '/get_success'
+    method = env['REQUEST_METHOD']
+    if method == 'GET' && path == '/get_success'
       [ 200, {'Content-Type' => 'text/plain'}, 'success' ]
+    elsif method == 'POST' && path == '/post_success'
+      [ 200, {'Content-Type' => 'text/plain'}, 'post success']
     else
       [ 404, {'Content-Type' => 'text/plain'}, '404 aw snap' ]
     end
