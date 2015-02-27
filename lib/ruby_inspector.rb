@@ -1,7 +1,7 @@
-require 'ruby_inspector/version'
-require 'json'
-require_relative './nsa/net_http_tracker'
-require_relative './ruby_inspector/dev_tools_request_tracker'
+require "ruby_inspector/version"
+require "json"
+require_relative "./nsa/net_http_tracker"
+require_relative "./ruby_inspector/dev_tools_request_tracker"
 
 module RubyInspector
   DELIMITER = "\0"
@@ -12,7 +12,7 @@ module RubyInspector
 
       begin
         send_init_info
-      rescue Errno::ECONNREFUSED => e
+      rescue Errno::ECONNREFUSED
         puts "[RubyInspector] Unable to send initialization info during setup"
       end
 
@@ -30,7 +30,7 @@ module RubyInspector
       begin
         send_init_info unless initialized?
         send_socket_msg(data)
-      rescue Errno::ECONNREFUSED => e
+      rescue Errno::ECONNREFUSED
         puts "[RubyInspector] Unable to send data: #{data}"
       end
     end
@@ -44,7 +44,7 @@ module RubyInspector
     end
 
     def socket
-      @socket ||= TCPSocket.new('localhost', 8124)
+      @socket ||= TCPSocket.new("localhost", 8124)
     end
 
     def send_socket_msg(data)
@@ -55,7 +55,7 @@ module RubyInspector
 
     def send_init_info
       send_socket_msg(
-        method: 'RubyInspector.initialize',
+        method: "RubyInspector.initialize",
         params: {
           name: app_name,
           type: :ruby,
