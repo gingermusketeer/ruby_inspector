@@ -10,7 +10,7 @@ describe Nsa::NetHttpTracker do
         notified_request_tracker = request_tracker
       }
       subject = described_class.new(
-        "http", "example.com", 80, "/", "POST", {"header" => "value" }, "body"
+        "http", "example.com", 80, "/", "POST", { "header" => "value" }, "body"
       )
 
       expect(notified_request_tracker).to be(subject)
