@@ -17,7 +17,7 @@ module RubyInspector
 
     def notify_request_started
       RubyInspector.send_info(
-        method: 'Network.requestWillBeSent',
+        method: "Network.requestWillBeSent",
         params: {
           requestId: request_id,
           request: {
@@ -27,24 +27,24 @@ module RubyInspector
             postData: request_tracker.request_body
           },
           timestamp: Time.now.to_f,
-          type: 'Other'
+          type: "Other"
         }
       )
     end
 
     def notify_response_received
       RubyInspector.send_info(
-        method: 'Network.responseReceived',
+        method: "Network.responseReceived",
         params: {
           requestId: request_id,
           timestamp: Time.now.to_f,
-          type: 'Document',
+          type: "Document",
           response: {
             url: request_tracker.url,
             status: request_tracker.status_code,
             statusText: request_tracker.status_message,
             headers: request_tracker.response_headers,
-            mimeType: 'text/html',
+            mimeType: "text/html",
             requestHeaders: request_tracker.request_headers,
             remotePort: request_tracker.port
           }
@@ -54,7 +54,7 @@ module RubyInspector
 
     def notify_body_received
       RubyInspector.send_info(
-        method: 'RubyInspector.network.cacheBody',
+        method: "RubyInspector.network.cacheBody",
         params: { requestId: request_id },
         result: {
           body: request_tracker.response_body,
@@ -63,7 +63,7 @@ module RubyInspector
       )
 
       RubyInspector.send_info(
-        method: 'Network.loadingFinished',
+        method: "Network.loadingFinished",
         params: {
           requestId: request_id,
           timestamp: Time.now.to_f,

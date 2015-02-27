@@ -1,4 +1,4 @@
-require 'net/http'
+require "net/http"
 
 module Nsa
   class NetHttpTracker
@@ -68,14 +68,14 @@ module Net
 
     def request(req, request_body = nil, &block)
       return orig_request(req, request_body, &block) unless started?
-      protocol = use_ssl? ? 'https' : 'http'
+      protocol = use_ssl? ? "https" : "http"
       request_headers = Hash[req.each_header.to_a]
       request_tracker = ::Nsa::NetHttpTracker.new(
         protocol, @address, @port, req.path, req.method, request_headers,
         request_body || req.body
       )
 
-      response_body = ''
+      response_body = ""
       block_provided = block_given?
       response = orig_request(req, request_body) do |resp|
         resp.read_body { |str| response_body << str }
