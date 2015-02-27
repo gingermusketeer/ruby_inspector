@@ -27,12 +27,10 @@ module RubyInspector
     end
 
     def send_info(data)
-      begin
-        send_init_info unless initialized?
-        send_socket_msg(data)
-      rescue Errno::ECONNREFUSED
-        puts "[RubyInspector] Unable to send data: #{data}"
-      end
+      send_init_info unless initialized?
+      send_socket_msg(data)
+    rescue Errno::ECONNREFUSED
+      puts "[RubyInspector] Unable to send data: #{data}"
     end
 
     private

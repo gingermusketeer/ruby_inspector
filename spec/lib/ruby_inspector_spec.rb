@@ -7,10 +7,10 @@ describe RubyInspector do
 
   describe ".enable" do
     let(:socket) { double("socket") }
-    let(:init_message) {
+    let(:init_message) do
       '{"method":"RubyInspector.initialize","params":{"name":"test app",'\
       '"type":"ruby","description":"test app desc"}}' + "\0"
-    }
+    end
 
     before do
       described_class.disable
