@@ -31,6 +31,11 @@ module RubyInspector
       send_socket_msg(data)
     rescue Errno::ECONNREFUSED
       puts "[RubyInspector] Unable to send data: #{data}"
+    rescue Errno::EPIPE
+      puts "[RubyInspector] Connection to RubyInspectorServer is broken. "\
+        "Attempting reconnect"
+      @socket = nil
+      retry
     end
 
     private

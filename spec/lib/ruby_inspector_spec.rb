@@ -1,12 +1,14 @@
 require "spec_helper"
 
 describe RubyInspector do
+  let(:socket) { double("socket") }
+
   it "has a version number" do
     expect(RubyInspector::VERSION).not_to be nil
   end
 
   describe ".enable" do
-    let(:socket) { double("socket") }
+
     let(:init_message) do
       '{"method":"RubyInspector.initialize","params":{"name":"test app",'\
       '"type":"ruby","description":"test app desc"}}' + "\0"
@@ -54,6 +56,30 @@ describe RubyInspector do
 
         described_class.send_info(method: "testing")
       end
+    end
+  end
+
+  describe ".send_info" do
+    let(:encoded_msg) { %({"key":"value"}\0) }
+    let(:msg) { { key: "value" } }
+    before do
+      allow(described_class).to receive(:socket).and_return(socket)
+    end
+
+    it "sends delimited messages to the ruby inspector server" do
+      expect(socket).to receive(:puts).with(encoded_msg)
+      described_class.send_info(msg)
+    end
+
+    it "tries to repair broken pipes" do
+      expect(socket).to receive(:puts).with(encoded_msg) {
+        allow(described_class).to receive(:socket).and_call_original
+        new_socket = double(:new_socket)
+        allow(TCPSocket).to receive(:new).and_return(new_socket)
+        expect(new_socket).to receive(:puts).with(encoded_msg)
+        fail Errno::EPIPE
+      }
+      described_class.send_info(msg)
     end
   end
 end
