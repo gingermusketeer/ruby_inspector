@@ -35,6 +35,7 @@ module RubyInspector
       puts "[RubyInspector] Connection to RubyInspectorServer is broken. "\
         "Attempting reconnect"
       @socket = nil
+      @initialized = false
       retry
     end
 

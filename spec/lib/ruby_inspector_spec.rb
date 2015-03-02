@@ -2,18 +2,16 @@ require "spec_helper"
 
 describe RubyInspector do
   let(:socket) { double("socket") }
+  let(:init_message) do
+    '{"method":"RubyInspector.initialize","params":{"name":"test app",'\
+    '"type":"ruby","description":"test app desc"}}' + "\0"
+  end
 
   it "has a version number" do
     expect(RubyInspector::VERSION).not_to be nil
   end
 
   describe ".enable" do
-
-    let(:init_message) do
-      '{"method":"RubyInspector.initialize","params":{"name":"test app",'\
-      '"type":"ruby","description":"test app desc"}}' + "\0"
-    end
-
     before do
       described_class.disable
     end
@@ -76,6 +74,14 @@ describe RubyInspector do
         allow(described_class).to receive(:socket).and_call_original
         new_socket = double(:new_socket)
         allow(TCPSocket).to receive(:new).and_return(new_socket)
+        allow(described_class).to receive(:app_name).and_return("test app")
+        allow(described_class).to receive(:description).and_return(
+          "test app desc"
+        )
+
+        # Reinitializes the connection to the server
+        expect(new_socket).to receive(:puts).with(init_message)
+        # Send the new info
         expect(new_socket).to receive(:puts).with(encoded_msg)
         fail Errno::EPIPE
       }
