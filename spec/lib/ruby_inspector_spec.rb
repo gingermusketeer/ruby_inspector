@@ -7,6 +7,9 @@ describe RubyInspector do
     '"type":"ruby","description":"test app desc"}}' + "\0"
   end
 
+  let(:app_name) { "test app" }
+  let(:description) { "test app desc" }
+
   it "has a version number" do
     expect(RubyInspector::VERSION).not_to be nil
   end
@@ -22,7 +25,7 @@ describe RubyInspector do
           socket
         )
         expect(socket).to receive(:puts).with(init_message)
-        described_class.enable("test app", "test app desc")
+        described_class.enable(app_name, description)
       end
     end
 
@@ -38,13 +41,13 @@ describe RubyInspector do
       it "catches the exception" do
         expect(socket).not_to receive(:puts)
         expect {
-          described_class.enable("test app", "test app desc")
+          described_class.enable(app_name, description)
         }.not_to raise_error
       end
 
       it "resends the init message when more info is sent" do
         # fails first time
-        described_class.enable("test app", "test app desc")
+        described_class.enable(app_name, description)
 
         allow(TCPSocket).to receive(:new).with("localhost", 8124).and_return(
           socket
@@ -74,10 +77,8 @@ describe RubyInspector do
         allow(described_class).to receive(:socket).and_call_original
         new_socket = double(:new_socket)
         allow(TCPSocket).to receive(:new).and_return(new_socket)
-        allow(described_class).to receive(:app_name).and_return("test app")
-        allow(described_class).to receive(:description).and_return(
-          "test app desc"
-        )
+        allow(described_class).to receive(:app_name).and_return(app_name)
+        allow(described_class).to receive(:description).and_return(description)
 
         # Reinitializes the connection to the server
         expect(new_socket).to receive(:puts).with(init_message)
